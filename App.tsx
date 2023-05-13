@@ -8,7 +8,10 @@ import { MenuProvider } from 'react-native-popup-menu';
 import { Provider } from 'react-redux';
 import { store } from './stores/store';
 import AppNavigator from './navigation/AppNavigator';
+import MainNavigator from './navigation/MainNavigator';
+import AuthScreen from './screens/AuthScreen';
 
+// AsyncStorage.clear();
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -51,9 +54,13 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <SafeAreaProvider>
+      <SafeAreaProvider onLayout={onLayout}>
+        <StatusBar 
+          style='light' 
+          backgroundColor='transparent'
+        />
         <MenuProvider>
-          <AppNavigator />
+          <AuthScreen />
         </MenuProvider>
       </SafeAreaProvider>
     </Provider>

@@ -6,7 +6,9 @@ export default {
     grey: "#7f8c8d",
     textColor: "#1c1e21",
     error: "#d93025",
-    primary: "#32d48e",
+    primary: "#5E3D8F",
     red: "#e74c3c",
     beige: "#FEF5C3",
+    pink: "#FD55CC",
+    lightBlueGreen: "#9CF2F7"
 }
