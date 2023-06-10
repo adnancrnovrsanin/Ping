@@ -1,13 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Chat, UserChat } from "../models/Chat";
+
+interface ChatsData {
+    [key: string]: Chat;
+}
+interface UserChatsData {
+    [key: string]: UserChat;
+}
+interface ChatsState {
+    userChatsData: UserChatsData;
+    chatsData: ChatsData;
+}
+
+const initialState: ChatsState = {
+    userChatsData: {},
+    chatsData: {}
+}
 
 const chatSlice = createSlice({
     name: 'chats',
-    initialState: {
-        chatsData: {},
-    },
+    initialState,
     reducers: {
-        setChatsData: (state, action) => {
-            state.chatsData = { ...action.payload.chatsData }
+        setUserChatsData: (state, action) => {
+            state.userChatsData = { ...action.payload.userChatsData };
         },
         clearChatsData: (state, action) => {
             state.chatsData = {}
@@ -15,5 +30,5 @@ const chatSlice = createSlice({
     }
 });
 
-export const { setChatsData, clearChatsData } = chatSlice.actions;
+export const { setUserChatsData, clearChatsData } = chatSlice.actions;
 export default chatSlice.reducer;

@@ -6,15 +6,23 @@ import colors from "../constants/colors";
 const imageSize = 40;
 
 const DataItem = (props: any) => {
-    const { title, subTitle, image, type, isChecked, icon } = props;
+    const { title, subTitle } = props;
 
-    const hideImage = props.hideImage && props.hideImage === true;
+    const image = props.image ? props.image : null;
+    const icon = props.icon ? props.icon : null;
+    const isChecked = props.isChecked ? props.isChecked : false;
+    const type = props.type ? props.type : null;
+    
+    console.log("DataItem: ", props);
+
+    const hideImage = props?.hideImage && props.hideImage === true;
+    const onPress = props?.onPress ? props.onPress : null;
 
     return (
-        <TouchableWithoutFeedback onPress={props.onPress}>
+        <TouchableWithoutFeedback onPress={onPress}>
             <View style={styles.container}>
                 {
-                    !icon && !hideImage &&(
+                    !icon && !hideImage && image && (
                         <ProfileImage 
                             uri={image}
                             size={imageSize}
@@ -66,6 +74,9 @@ const DataItem = (props: any) => {
                 }
             </View>
         </TouchableWithoutFeedback>
+        // <View style={styles.container}>
+        //     <Text style={{ color: "black" }}>Chat</Text>
+        // </View>
     );
 }
 

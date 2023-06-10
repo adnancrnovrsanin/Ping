@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
+import { StyleSheet, Text, TouchableNativeFeedback, View, FlatList, Dimensions } from "react-native";
 import PageContainer from "../components/PageContainer";
 import { useEffect, useRef } from "react";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
@@ -6,8 +6,19 @@ import CustomHeaderButton from "../components/CustomHeaderButton";
 import { Menu, MenuOptions, MenuTrigger } from "react-native-popup-menu";
 import CustomMenuItem from "../components/CustomMenuItem";
 import { Entypo } from "@expo/vector-icons";
+import { RootState } from "../stores/store";
+import { useSelector } from "react-redux";
+import DataItem from "../components/DataItem";
 
 const ChatListScreen = (props: any) => {
+    const userData = useSelector((state: RootState) => state.auth.userData);
+    // const userChats = useSelector((state: RootState) => {
+    //     const chatsData = state.chats.userChatsData;
+    //     // @ts-ignore
+    //     return Object.values(chatsData).sort((a, b) => new Date(b.chat.updatedAt) - new Date(a.chat.updatedAt));
+    // });
+    const userChats = useSelector((state: RootState) => Object.values(state.chats.userChatsData));
+    const storedUsers = useSelector((state: RootState) => state.users.storedUsers);
 
     const menuRef = useRef(null);
 
@@ -47,14 +58,61 @@ const ChatListScreen = (props: any) => {
                 );
             }
         });
-    }, []);
+    }, [userChats]);
 
     return (
         <PageContainer style={styles.container}>
-            <Text>Chat List Screen</Text>
-            <TouchableNativeFeedback onPress={() => props.navigation.navigate("ChatScreen")}>
-                <Text>Chat Screen</Text>
-            </TouchableNativeFeedback>
+            {
+                userChats.length > 0 && (
+                    <FlatList
+                        data={userChats}
+                        keyExtractor={(item, index) => index.toString()}
+                        style={{
+                            flex: 1,
+                            // backgroundColor: "red"
+                        }}
+                        renderItem={(itemData) => {
+                            const item = itemData.item;
+                            const chatData = item.chat;
+                            const chatId = chatData.id;
+                            const isGroupChat = chatData.chatType === "GROUPCHAT";
+                            
+                            let title = "";
+                            let image = "";
+                            
+
+                            if (isGroupChat) {
+                                title = chatData.chatName || "";
+                                image = chatData.chatImageUrl || "";
+                            } else {
+                                const otherUserPhoneNumber = chatData.memberPhoneNumbers.find((phoneNumber: string) => phoneNumber !== userData?.phoneNumber);
+                                const otherUser = storedUsers[otherUserPhoneNumber!];
+
+                                if (!otherUser) return null;
+
+                                title = otherUser.phoneNumber;
+                                image = otherUser.profilePictureUrl || "";
+                            }
+
+                            return (
+                                <DataItem 
+                                    title={title}
+                                    // subTitle={chatData.latestMessageText || "New chat"}
+                                    subTitle={"New chat"}
+                                    image={image}
+                                />
+                            );
+                        }}
+                    />
+                )
+            }
+            {
+                userChats.length === 0 && (
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <Text>You have no chats</Text>
+                    </View>
+                )
+            }
         </PageContainer>
     );
 }
@@ -62,9 +120,6 @@ const ChatListScreen = (props: any) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: "center",
-        textAlign: "center",
     }
 })
 

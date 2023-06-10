@@ -1,8 +1,9 @@
 import agent from "../../api/agent";
 
-export const getUserData = async (phoneNumber: string) => {
+export const getUserDataByPhoneNumber = async (phoneNumber: string) => {
     try {
-        const currUser = await agent.Account.getUser();
+        const userData = await agent.Account.getUserByPhoneNumber(phoneNumber);
+        return userData;
     } catch (error) {
         console.log(error);
     }

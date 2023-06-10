@@ -8,7 +8,11 @@ export interface UserChat {
 }
 
 export interface CreateUserChatRequest {
-
+    chat: Chat
+    userPhoneNumber: string
+    didUpdateLast: boolean
+    creator: boolean
+    admin: boolean
 }
 
 export interface Chat {
@@ -18,17 +22,17 @@ export interface Chat {
     chatDescription: string
     chatType: string
     memberPhoneNumbers: string[]
-    createdAt?: string
-    updatedAt?: string
+    createdAt: string
+    updatedAt: string
 }
 
 export interface CreateChatRequest {
     id: number
-    chatName?: string
+    chatName: string
     chatImageUrl: string
     chatDescription: string
     chatType: string
     memberPhoneNumbers: string[]
-    createdAt?: string
-    updatedAt?: string
+    createdAt: string
+    updatedAt: string
 }

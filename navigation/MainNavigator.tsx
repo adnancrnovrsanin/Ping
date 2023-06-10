@@ -12,6 +12,8 @@ import colors from "../constants/colors";
 import NewChatScreen from "../screens/NewChatScreen";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
+import { getUserChats } from "../utils/actions/chatActions";
+import { setUserChatsData } from "../stores/chatsSlice";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -129,8 +131,12 @@ const MainNavigator = (props: any) => {
     const responseListener = useRef();
 
     useEffect(() => {
-
-    }, []);
+        (
+            async () => {
+                if (userData) await getUserChats(userData.phoneNumber);
+            }
+        )();
+    }, [userData]);
 
     return (
         <StackNavigator />
