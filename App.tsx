@@ -10,6 +10,8 @@ import { store } from './stores/store';
 import AppNavigator from './navigation/AppNavigator';
 import MainNavigator from './navigation/MainNavigator';
 import AuthScreen from './screens/AuthScreen';
+import OtpScreen from './screens/OtpScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // AsyncStorage.clear();
 SplashScreen.preventAutoHideAsync();
@@ -60,7 +62,7 @@ export default function App() {
           backgroundColor='transparent'
         />
         <MenuProvider>
-          <AuthScreen />
+          <AppNavigator />
         </MenuProvider>
       </SafeAreaProvider>
     </Provider>

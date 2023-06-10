@@ -1,17 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { User } from "../models/UserModels";
+
+// Define a type for the slice state
+interface AuthState {
+    token: string | null;
+    userData: User | null;
+    didTryAutoLogin: boolean;
+}
+
+// Define the initial state using that type
+const initialState: AuthState = {
+    token: null,
+    userData: null,
+    didTryAutoLogin: false
+};
 
 const authSlice = createSlice({
     name: 'auth',
-    initialState: {
-        token: null,
-        userData: null,
-        didTryAutoLogin: false
-    },
+    initialState,
     reducers: {
         authenticate: (state, action) => {
             const { payload } = action;
             state.token = payload.token;
-            state.userData = payload.userData;
+            state.userData = payload.user;
             state.didTryAutoLogin = false;
         },
         setDidTryAutoLogin: (state) => {

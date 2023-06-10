@@ -9,7 +9,7 @@ export const store = configureStore({
         auth: authSlice,
         chats: chatsSlice,
         messages: messagesSlice,
-        user: userSlice
+        users: userSlice
     }
 });
 

@@ -7,9 +7,12 @@ import { Entypo, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { isLoading } from "expo-font";
 import AwesomeAlert from "react-native-awesome-alerts";
 import colors from "../constants/colors";
+import Bubble from "../components/Bubble";
 
 const ChatScreen = (props: any) => {
     const [messageText, setMessageText] = useState("");
+    const [chatId, setChatId] = useState(props.route?.params?.chatId);
+    const [errorBannerText, setErrorBannerText] = useState("");
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -45,6 +48,56 @@ const ChatScreen = (props: any) => {
             <KeyboardAvoidingView style={styles.screen} behavior={ Platform.OS === "ios" ? "padding" : undefined } keyboardVerticalOffset={100}>
 
                 <PageContainer style={styles.backgroundImage}>
+
+                        {
+                            !chatId && (
+                                <Bubble text="This is a new chat. Say hi!" type="system" />
+                            )
+                        }
+
+                        {
+                            errorBannerText !== "" && (
+                                <Bubble text={errorBannerText} type="error" />
+                            )
+                        }
+
+                        {/* {
+                            chatId && (
+                                <FlatList 
+                                    data={chatMessages}
+                                    ref={(ref) => flatList.current = ref}
+                                    onContentSizeChange={() => chatMessages.length > 0 && flatList.current.scrollToEnd({ animated: false })}
+                                    onLayout={() => flatList.current.scrollToEnd({ animated: false })}
+                                    renderItem={itemData => {
+                                        const message = itemData.item;
+
+                                        const sender = message.sentBy && storedUsers[message.sentBy];
+                                        const name = sender && `${sender.firstName} ${sender.lastName}`;
+
+                                        let messageType;
+                                        if (message.type && message.type === "info")
+                                            messageType = "info";
+                                        else messageType = message.sentBy === userData.userId ? "sent" : "received";
+
+                                        return (
+                                            <Bubble 
+                                                text={message.text} 
+                                                type={messageType} 
+                                                messageId={message.key}
+                                                userId={userData.userId}
+                                                chatId={chatId}
+                                                date={message.sentAt}
+                                                name={!chatData.isGroupChat || message.sentBy === userData.userId ? undefined : name}
+                                                setReply={() => setReplyingTo(message)}
+                                                replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
+                                                imageUrl={message.imageUrl}
+                                            />
+                                        );
+                                    }}
+                                />
+                            )
+                        } */}
+
                 </PageContainer>
 
                 <View style={styles.inputContainer}>
@@ -54,9 +107,17 @@ const ChatScreen = (props: any) => {
                         <Entypo name="attachment" size={20} color="white" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => {}} style={{ backgroundColor: colors.primary, ...styles.attachmentButton}}>
-                        <MaterialCommunityIcons name="microphone-outline" size={20} color="white" />
-                    </TouchableOpacity>
+                    {
+                        messageText === "" ? (
+                            <TouchableOpacity onPress={() => {}} style={{ backgroundColor: colors.primary, ...styles.attachmentButton}}>
+                                <MaterialCommunityIcons name="microphone-outline" size={20} color="white" />
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity onPress={() => {}} style={{ backgroundColor: colors.primary, ...styles.attachmentButton}}>
+                                <Feather name="send" size={20} color="white" />
+                            </TouchableOpacity>
+                        )
+                    }
 
 
                     {/* <AwesomeAlert 

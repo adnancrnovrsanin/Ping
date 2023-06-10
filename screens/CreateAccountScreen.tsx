@@ -11,9 +11,7 @@ import PhoneInput from "react-native-phone-number-input";
 import agent from "../api/agent";
 import { OTPRequest } from "../models/AuthInterfaces";
 
-const AuthScreen = (props: any) => {
-
-    const phoneInput = useRef<PhoneInput>(null);
+const CreateAccountScreen = (props: any) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -25,46 +23,62 @@ const AuthScreen = (props: any) => {
                             <Image source={logo} style={styles.image} />
                         </View>
 
+                        <View style={styles.descriptionContainer}>
+                            <Text style={styles.descriptionText}>
+                                Your display name determines how other people see you on the app. You can always change it later.
+                            </Text>
+                        </View>
+
                         <Formik
-                            initialValues={{ phoneNumber: "", error: null }}
+                            initialValues={{ 
+                                displayName: "", 
+                                about: "",
+                                error: null
+                            }}
                             onSubmit={(values, { setErrors }) => {
-                                const request: OTPRequest = {
-                                    phoneNumber: values.phoneNumber,
-                                };
-                                console.log("request: ", request);
                                 console.log(values);
-                                
-                                agent.Account.generateOTP(request)
-                                    .then(() => {
-                                        props.navigation.navigate("Otp", { phoneNumber: values.phoneNumber });
-                                    })
-                                    .catch((error) => {
-                                        console.log(error);
-                                    });
                             }}
                             validationSchema={Yup.object({
-                                phoneNumber: Yup.string().required("Phone number is required"),
+                                displayName: Yup.string().required("Display name is required"),
+                                about: Yup.string(),
                             })}
                         >
                             {({ handleSubmit, isSubmitting, errors, isValid, dirty, handleChange, handleBlur, touched, values }) => (
                                 <View style={styles.container}>
-                                    <View>
-                                        <Text style={styles.label}>{"Phone number: "}</Text>
-                                            <PhoneInput 
-                                                ref={phoneInput}
-                                                defaultValue={values.phoneNumber}
-                                                defaultCode="RS"
-                                                layout="first"
-                                                onChangeFormattedText={text => handleChange("phoneNumber")(text)}
+                                    <View style={styles.inputErrorWrapper}>
+                                        <Text style={styles.label}>{"Display name: "}</Text>
+                                            <TextInput 
+                                                style={styles.input}
+                                                placeholder="Display name"
+                                                placeholderTextColor={colors.grey}
                                                 autoFocus
-                                                containerStyle={styles.inputContainer}
-                                                textInputStyle={styles.input}
+                                                onChangeText={displayName => handleChange("displayName")(displayName)}
+                                                defaultValue={values.displayName}
                                             />
 
                                         {
-                                            errors.phoneNumber && touched.phoneNumber && (
+                                            errors.displayName && touched.displayName && (
                                                 <View style={styles.errorContainer}>
-                                                    <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+                                                    <Text style={styles.errorText}>{errors.displayName}</Text>
+                                                </View>
+                                            )
+                                        }
+                                    </View>
+
+                                    <View style={styles.inputErrorWrapper}>
+                                        <Text style={styles.label}>{"About: "}</Text>
+                                            <TextInput 
+                                                style={styles.input}
+                                                placeholder="Write something about yourself..."
+                                                placeholderTextColor={colors.grey}
+                                                onChangeText={about => handleChange("about")(about)}
+                                                defaultValue={values.about}
+                                            />
+
+                                        {
+                                            errors.about && touched.about && (
+                                                <View style={styles.errorContainer}>
+                                                    <Text style={styles.errorText}>{errors.about}</Text>
                                                 </View>
                                             )
                                         }
@@ -109,6 +123,22 @@ const AuthScreen = (props: any) => {
 }
 
 const styles = StyleSheet.create({
+    descriptionContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        marginVertical: 15,
+    },
+    descriptionText: {
+        color: colors.textColor,
+        fontFamily: "medium",
+        letterSpacing: 0.3,
+        textAlign: "center",
+        fontSize: 15,
+    },
+    inputErrorWrapper: {
+        marginBottom: 20,
+        height: 85
+    },
     linkContainer: {
         justifyContent: "center",
         alignItems: "center",
@@ -142,14 +172,6 @@ const styles = StyleSheet.create({
         letterSpacing: 0.3,
         color: colors.textColor,
     },
-    inputContainer: {
-        width: "100%",
-        flexDirection: "row",
-        backgroundColor: colors.nearlyWhite,
-        paddingHorizontal: 10,
-        borderRadius: 5,
-        alignItems: "center",
-    },
     icon: {
         marginRight: 10,
         color: colors.grey,
@@ -159,7 +181,13 @@ const styles = StyleSheet.create({
         flex: 1,
         fontFamily: "regular",
         letterSpacing: 0.3,
-        paddingTop: 0,
+        width: "100%",
+        flexDirection: "row",
+        backgroundColor: colors.nearlyWhite,
+        paddingHorizontal: 15,
+        height: 50,
+        borderRadius: 5,
+        alignItems: "center",
     },
     errorContainer: {
         marginVertical: 5,
@@ -181,4 +209,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AuthScreen;
+export default CreateAccountScreen;

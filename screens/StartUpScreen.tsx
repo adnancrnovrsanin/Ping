@@ -5,6 +5,9 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authenticate, setDidTryAutoLogin } from "../stores/authSlice";
+import agent from "../api/agent";
+import { AuthResponse } from "../models/AuthInterfaces";
+import axios from "axios";
 
 const StartUpScreen = (props: any) => {
     const dispatch = useDispatch();
@@ -18,17 +21,25 @@ const StartUpScreen = (props: any) => {
                     dispatch(setDidTryAutoLogin());
                     return;
                 }
+                
+                const { token, userPhoneNumber, expiryDate: expiryDateString } = JSON.parse(storedAuthInfo);
 
-                const { token, userId, expiryDate: expiryDateString } = JSON.parse(storedAuthInfo);
+                console.log(token, userPhoneNumber, expiryDateString);
+                
 
                 const expiryDate = new Date(expiryDateString);
 
-                if (expiryDate <= new Date() || !token || !userId) {
+                if (expiryDate <= new Date() || !token || !userPhoneNumber) {
                     dispatch(setDidTryAutoLogin());
                     return;
                 }
 
-                dispatch(authenticate({ token, userId, expiryDate }));
+                const response = await axios.get<AuthResponse>(`/user/${userPhoneNumber}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                dispatch(authenticate({ token, user: response.data }));
             }
         )();
     }, [dispatch]);

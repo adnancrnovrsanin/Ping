@@ -2,13 +2,16 @@ import { StyleSheet, Text, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ChatListScreen from "../screens/ChatListScreen";
 import ChatScreen from "../screens/ChatScreen";
 import CallsListScreen from "../screens/CallsListScreen";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import colors from "../constants/colors";
+import NewChatScreen from "../screens/NewChatScreen";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../stores/store";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -101,15 +104,36 @@ const StackNavigator = () => {
                     headerTintColor: "white",
                 }}
             />
+
+            <Stack.Group screenOptions={{ presentation: "containedModal" }}>
+                <Stack.Screen 
+                    name="NewChat"
+                    component={NewChatScreen}
+                />
+            </Stack.Group>
         </Stack.Navigator>
     );
 }
 
 const MainNavigator = (props: any) => {
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+
+    const [isLoading, setIsLoading] = useState(true);
+    const userData = useSelector((state: RootState) => state.auth.userData);
+    const storedUsers = useSelector((state: RootState) => state.users.storedUsers);
+
+    const [expoPushToken, setExpoPushToken] = useState('');
+    // console.log(expoPushToken);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+
+    useEffect(() => {
+
+    }, []);
+
     return (
-        <NavigationContainer>
-            <StackNavigator />
-        </NavigationContainer>
+        <StackNavigator />
     );
 }
 
