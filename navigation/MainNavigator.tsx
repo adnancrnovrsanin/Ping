@@ -9,11 +9,20 @@ import CallsListScreen from "../screens/CallsListScreen";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import colors from "../constants/colors";
-import NewChatScreen from "../screens/NewChatScreen";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
 import { getUserChats } from "../utils/actions/chatActions";
 import { setUserChatsData } from "../stores/chatsSlice";
+import * as Contacts from "expo-contacts";
+import { StoredContacts, setStoredContacts } from "../stores/contactsSlice";
+import { CheckUserResponse, User } from "../models/UserModels";
+import { checkIfUserExists } from "../utils/actions/userActions";
+import agent from "../api/agent";
+import NewGroupChatScreen from "../screens/NewGroupChatScreen";
+import NewChatScreen from "../screens/NewChatScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import ChatSettingsScreen from "../screens/ChatSettingsScreen";
+import ContactScreen from "../screens/ContactScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -101,13 +110,33 @@ const StackNavigator = () => {
                     headerTitleStyle: {
                         fontFamily: "medium",
                         color: "white",
-                        fontSize: 15
+                        fontSize: 16
                     },
                     headerTintColor: "white",
+                    gestureEnabled: true,
                 }}
             />
 
+            <Stack.Screen 
+                name="Settings"
+                component={SettingsScreen}
+            />
+
+            <Stack.Screen 
+                name="ChatSettings"
+                component={ChatSettingsScreen}
+            />
+
+            <Stack.Screen 
+                name="Contact"
+                component={ContactScreen}
+            />
+
             <Stack.Group screenOptions={{ presentation: "containedModal" }}>
+                <Stack.Screen 
+                    name="NewGroupChat"
+                    component={NewGroupChatScreen}
+                />
                 <Stack.Screen 
                     name="NewChat"
                     component={NewChatScreen}
@@ -133,10 +162,56 @@ const MainNavigator = (props: any) => {
     useEffect(() => {
         (
             async () => {
-                if (userData) await getUserChats(userData.phoneNumber);
+                if (userData) {
+                    setIsLoading(true);
+
+                    
+
+                    await Contacts.requestPermissionsAsync();
+                    const { data } = await Contacts.getContactsAsync({
+                        fields: [Contacts.Fields.PhoneNumbers],
+                    });
+
+                    let contacts: any = {};
+                    if (data.length > 0) {
+                        for (let i = 0; i < data.length; i++) {
+                            const contact = data[i];
+                            if (contact.phoneNumbers && contact.phoneNumbers.length > 0) {
+                                for (let j = 0; j < contact.phoneNumbers.length; j++) {
+                                    const phoneNumber = contact.phoneNumbers[j];
+                                    if (phoneNumber.number) {
+                                        let number = phoneNumber.number.replaceAll(/[\s\-\(\)]/g, "");
+                                        if (number?.startsWith("0")) number = "+381" + number.substring(1);
+
+                                        if (!contacts[number]) contacts[number] = contact.name;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    try {
+                        // console.log(Object.keys(contacts));
+                        const result = await agent.Account.checkIfUsersExist(Object.keys(contacts));
+
+                        result.map((user: User) => user.displayName = contacts[user.phoneNumber] ?? user.displayName);
+
+                        if (result) dispatch(setStoredContacts({ newContacts: result }));
+                    } catch (error) {
+                        console.log(error);
+                    }
+
+                    setIsLoading(false);
+                }
             }
         )();
     }, [userData]);
+
+    if (isLoading) return (
+        <View style={ styles.container }>
+            <Text style={ styles.label }>Loading contacts...</Text>
+        </View>
+    );
 
     return (
         <StackNavigator />

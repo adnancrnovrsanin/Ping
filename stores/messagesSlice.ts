@@ -1,19 +1,45 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Message, MessageDto } from "../models/Message";
+
+interface ChatMessagesPayload {
+    chatId: string;
+    messagesData: MessageDto[];
+}
+
+interface ChatMessagesAction {
+    type: string;
+    payload: ChatMessagesPayload;
+}
+
+interface MessagesData {
+    [key: string]: MessageDto[];
+}
+
+interface StarredMessages {
+    [key: string]: MessageDto[];
+}
+
+interface MessagesState {
+    messagesData: MessagesData;
+    starredMessages: StarredMessages;
+}
+
+const initialState: MessagesState = {
+    messagesData: {},
+    starredMessages: {}
+}
 
 const messagesSlice = createSlice({
     name: 'messages',
-    initialState: {
-        messagesData: {},
-        starredMessages: {}
-    },
+    initialState,
     reducers: {
-        setChatMessages: (state, action) => {
+        setChatMessages: (state, action: ChatMessagesAction) => {
             const { chatId, messagesData } = action.payload;
             
             //@ts-ignore
             state.messagesData[chatId] = messagesData;
 
-            state.messagesData = { ...state.messagesData };
+            state.messagesData = JSON.parse(JSON.stringify(state.messagesData));
         },
         addStarredMessage: (state, action) => {
             const { starredMessageData } = action.payload;

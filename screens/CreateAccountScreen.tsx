@@ -10,8 +10,25 @@ import { FontAwesome } from "@expo/vector-icons";
 import PhoneInput from "react-native-phone-number-input";
 import agent from "../api/agent";
 import { OTPRequest } from "../models/AuthInterfaces";
+import { UpdateUserRequest, User } from "../models/UserModels";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../stores/store";
+import { updateLoggedInUserData } from "../stores/authSlice";
+import SubmitButton from "../components/SubmitButton";
+
+interface FormValues {
+    displayName: string;
+    about: string;
+}
 
 const CreateAccountScreen = (props: any) => {
+    const dispatch = useDispatch();
+    const userData = useSelector((state: RootState) => state.auth.userData);
+
+    const initialValues: FormValues = {
+        displayName: "",
+        about: "",
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -33,10 +50,26 @@ const CreateAccountScreen = (props: any) => {
                             initialValues={{ 
                                 displayName: "", 
                                 about: "",
-                                error: null
                             }}
                             onSubmit={(values, { setErrors }) => {
-                                console.log(values);
+                                (
+                                    async () => {
+                                        try {
+                                            const newUser: UpdateUserRequest = {
+                                                phoneNumber: userData?.phoneNumber ?? "",
+                                                profilePictureUrl: userData?.profilePictureUrl ?? null,
+                                                displayName: values.displayName,
+                                                about: values.about.trim() === "" ? null : values.about,
+                                            }
+        
+                                            const user = await agent.Account.updateUser(newUser);
+        
+                                            dispatch(updateLoggedInUserData({ newData: user as User }));
+                                        } catch (error) {
+                                            console.log(error);
+                                        }
+                                    }
+                                )();
                             }}
                             validationSchema={Yup.object({
                                 displayName: Yup.string().required("Display name is required"),
@@ -84,32 +117,15 @@ const CreateAccountScreen = (props: any) => {
                                         }
                                     </View>
 
-                                    <ErrorMessage name="error" render={() => <label style={{ marginBottom: 10 }} color="red">{errors.error}</label>}/>
-
                                     {
                                         isSubmitting ? (
                                             <ActivityIndicator style={{ marginTop: 20 }} size="large" color={colors.lightBlueGreen} />
                                         ) : (
-                                            <TouchableOpacity 
-                                                style={{
-                                                    ...styles.button,
-                                                    backgroundColor: (!isValid || !dirty || isSubmitting) ? colors.lightGrey : colors.primary,
-                                                }}
-                                                disabled={!isValid || !dirty || isSubmitting}
-                                                onPress={() => {
-                                                    handleSubmit();
-                                                }}
-                                            >
-                                                <Text
-                                                    style={{
-                                                        color: (!isValid || !dirty || isSubmitting) ? colors.grey : "white",
-                                                        fontFamily: "bold",
-                                                        letterSpacing: 0.3,
-                                                    }}
-                                                >
-                                                    Submit
-                                                </Text>
-                                            </TouchableOpacity>
+                                            <SubmitButton 
+                                                onPress={handleSubmit}
+                                                disabled={!isValid || !dirty}
+                                                text="Create account"
+                                            />
                                         )
                                     }
                                 </View>

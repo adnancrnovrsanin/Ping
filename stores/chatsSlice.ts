@@ -24,11 +24,29 @@ const chatSlice = createSlice({
         setUserChatsData: (state, action) => {
             state.userChatsData = { ...action.payload.userChatsData };
         },
-        clearChatsData: (state, action) => {
+        setChatsData: (state, action) => {
+            state.chatsData = { ...action.payload.chatsData };
+        },
+        updateUserChatsData: (state, action) => {
+            const userChat = action.payload.userChat;
+            state.userChatsData[userChat.id] = JSON.parse(JSON.stringify(userChat));
+        },
+        updateChatsData: (state, action) => {
+            const chat = action.payload.chat;
+            state.chatsData[chat.id] = JSON.parse(JSON.stringify(chat));
+        },
+        addChatsData: (state, action) => {
+            const chat = action.payload.chat;
+            state.chatsData[chat.id] = JSON.parse(JSON.stringify(chat));
+        },
+        clearChatsData: (state) => {
             state.chatsData = {}
+        },
+        clearUserChatsData: (state) => {
+            state.userChatsData = {}
         }
     }
 });
 
-export const { setUserChatsData, clearChatsData } = chatSlice.actions;
+export const { setUserChatsData, clearChatsData, setChatsData, updateUserChatsData, updateChatsData, addChatsData, clearUserChatsData } = chatSlice.actions;
 export default chatSlice.reducer;

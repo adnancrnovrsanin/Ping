@@ -43,19 +43,19 @@ const OtpScreen = (props: any) => {
         agent.Account.authenticate(request)
           .then((response) => {
             if (response) {
+              console.log("response: ", response);
+                
+              AsyncStorage.setItem("userData", JSON.stringify({
+                token: response.token,
+                userPhoneNumber: response.user.phoneNumber,
+                expiryDate: response.tokenExpiration,
+              }));
+              dispatch(authenticate(response));
+              
               if (response.user.displayName === null) {
                 props.navigation.navigate("CreateAccount", {
                   phoneNumber: phoneNumber,
                 });
-              } else {
-                console.log("response: ", response);
-                
-                AsyncStorage.setItem("userData", JSON.stringify({
-                  token: response.token,
-                  userPhoneNumber: response.user.phoneNumber,
-                  expiryDate: response.tokenExpiration,
-                }));
-                dispatch(authenticate(response));
               }
             } else {
               setInvalidCode(true);

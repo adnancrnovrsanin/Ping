@@ -11,7 +11,7 @@ const Input = (props: any) => {
 
             <View style={styles.inputContainer}>
                 {props.icon && <props.iconPack name={props.icon} size={props.iconSize || 15} style={styles.icon} />}
-                <TextInput {...props} {...field} style={styles.input} />
+                <TextInput {...props} {...field} style={styles.input} onChangeText={text => props.onChange(text)} />
             </View>
 
             {

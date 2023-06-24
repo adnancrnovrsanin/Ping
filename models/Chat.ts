@@ -16,23 +16,22 @@ export interface CreateUserChatRequest {
 }
 
 export interface Chat {
-    id: number
-    chatName?: string
+    id: string
+    chatName: string | null
     chatImageUrl: string
     chatDescription: string
     chatType: string
     memberPhoneNumbers: string[]
+    latestMessage: string | null
     createdAt: string
     updatedAt: string
 }
 
 export interface CreateChatRequest {
-    id: number
-    chatName: string
-    chatImageUrl: string
-    chatDescription: string
+    chatName: string;
+    chatImageUrl: string | null;
+    chatDescription: string | null;
     chatType: string
     memberPhoneNumbers: string[]
-    createdAt: string
-    updatedAt: string
+    creatorPhoneNumber: string
 }

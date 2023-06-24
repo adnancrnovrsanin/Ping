@@ -1,4 +1,4 @@
-import { TouchableWithoutFeedback, View, Text, StyleSheet } from "react-native";
+import { TouchableWithoutFeedback, View, Text, StyleSheet, TouchableNativeFeedback, Dimensions, Platform, TouchableOpacity } from "react-native";
 import ProfileImage from "./ProfileImage";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import colors from "../constants/colors";
@@ -13,19 +13,142 @@ const DataItem = (props: any) => {
     const isChecked = props.isChecked ? props.isChecked : false;
     const type = props.type ? props.type : null;
     
-    console.log("DataItem: ", props);
+    // console.log("DataItem: ", props);
 
     const hideImage = props?.hideImage && props.hideImage === true;
     const onPress = props?.onPress ? props.onPress : null;
 
+    if (onPress === null) {
+        return (
+            <View>
+                <View style={styles.container}>
+                    {
+                        !icon && !hideImage && (
+                            <ProfileImage 
+                                uri={image}
+                                size={imageSize}
+                                title={title}
+                            />
+                        )
+                    }
+
+                    {
+                        icon && !hideImage && (
+                            <View style={styles.leftIconContainer}>
+                                <AntDesign name={icon} size={20} color={colors.blue} />
+                            </View>
+                        )
+                    }
+                    <View style={styles.textContainer}>
+                        <Text
+                            numberOfLines={1}
+                            style={{ color: type === "button" ? colors.blue : colors.textColor, ...styles.title }}
+                        >
+                            {title}
+                        </Text>
+
+                        {
+                            subTitle && (
+                                <Text
+                                    numberOfLines={1}
+                                    style={styles.subTitle}
+                                >
+                                    {subTitle}
+                                </Text>
+                            )
+                        }
+                    </View>
+
+                    {
+                        type === "checkbox" && (
+                            <View style={{ ...styles.iconContainer, ...isChecked && styles.checkedStyle }}>
+                                <Ionicons name="checkmark" size={18} color="white" />
+                            </View>
+                        )
+                    }
+
+                    {       
+                        type === "link" && (
+                            <View style={{ ...styles.iconContainer, ...isChecked && styles.checkedStyle }}>
+                                <Ionicons name="chevron-forward-outline" size={24} color="black" />
+                            </View>
+                        )
+                    }
+                </View>
+            </View>
+        );
+    }
+
+    if (Platform.OS === "ios") {
+        return (
+            <TouchableOpacity onPress={onPress}>
+                <View style={styles.container}>
+                    {
+                        !icon && !hideImage && (
+                            <ProfileImage 
+                                uri={image}
+                                size={imageSize}
+                                title={title}
+                            />
+                        )
+                    }
+
+                    {
+                        icon && !hideImage && (
+                            <View style={styles.leftIconContainer}>
+                                <AntDesign name={icon} size={20} color={colors.blue} />
+                            </View>
+                        )
+                    }
+                    <View style={styles.textContainer}>
+                        <Text
+                            numberOfLines={1}
+                            style={{ color: type === "button" ? colors.blue : colors.textColor, ...styles.title }}
+                        >
+                            {title}
+                        </Text>
+
+                        {
+                            subTitle && (
+                                <Text
+                                    numberOfLines={1}
+                                    style={styles.subTitle}
+                                >
+                                    {subTitle}
+                                </Text>
+                            )
+                        }
+                    </View>
+
+                    {
+                        type === "checkbox" && (
+                            <View style={{ ...styles.iconContainer, ...isChecked && styles.checkedStyle }}>
+                                <Ionicons name="checkmark" size={18} color="white" />
+                            </View>
+                        )
+                    }
+
+                    {       
+                        type === "link" && (
+                            <View style={{ ...styles.iconContainer, ...isChecked && styles.checkedStyle }}>
+                                <Ionicons name="chevron-forward-outline" size={24} color="black" />
+                            </View>
+                        )
+                    }
+                </View>
+            </TouchableOpacity>
+        );
+    }
+
     return (
-        <TouchableWithoutFeedback onPress={onPress}>
+        <TouchableNativeFeedback onPress={onPress}>
             <View style={styles.container}>
                 {
-                    !icon && !hideImage && image && (
+                    !icon && !hideImage && (
                         <ProfileImage 
                             uri={image}
                             size={imageSize}
+                            title={title}
                         />
                     )
                 }
@@ -73,17 +196,14 @@ const DataItem = (props: any) => {
                     )
                 }
             </View>
-        </TouchableWithoutFeedback>
-        // <View style={styles.container}>
-        //     <Text style={{ color: "black" }}>Chat</Text>
-        // </View>
+        </TouchableNativeFeedback>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
-        paddingVertical: 7,
+        paddingVertical: 10,
         borderBottomColor: colors.extraLightGrey,
         borderBottomWidth: 1,
         alignItems: "center",

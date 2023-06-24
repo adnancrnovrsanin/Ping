@@ -30,9 +30,19 @@ const userSlice = createSlice({
             }
 
             state.storedUsers = existingUsers;
+        },
+        addStoredUser: (state, action) => {
+            const { user } = action.payload;
+            // @ts-ignore
+            state.storedUsers[user.phoneNumber] = {...user};
+        },
+        editStoredUser: (state, action) => {
+            const { user } = action.payload;
+            // @ts-ignore
+            state.storedUsers[user.phoneNumber] = user;
         }
     }
 });
 
-export const { setStoredUsers } = userSlice.actions;
+export const { setStoredUsers, addStoredUser, editStoredUser } = userSlice.actions;
 export default userSlice.reducer;

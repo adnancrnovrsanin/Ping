@@ -1,3 +1,11 @@
+import { TextEncoder, TextDecoder } from 'text-encoding';
+import BigInt from 'big-integer';
+Object.assign(global, {
+  TextEncoder: TextEncoder,
+  TextDecoder: TextDecoder,
+  BigInt: BigInt
+});
+
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -13,7 +21,9 @@ import AuthScreen from './screens/AuthScreen';
 import OtpScreen from './screens/OtpScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// AsyncStorage.clear();
+
+
+AsyncStorage.clear();
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {

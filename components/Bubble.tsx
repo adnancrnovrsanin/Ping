@@ -8,12 +8,13 @@ import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-m
 import { Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../stores/store";
+import { LinearGradient } from "expo-linear-gradient";
 
 function formatAmPm(dateString: string) {
     const date = new Date(dateString);
     var hours = date.getHours();
     var minutes: any = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
+    var ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? '0'+minutes : minutes;
@@ -39,7 +40,7 @@ const Bubble = (props: any) => {
     const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name, imageUrl } = props;
 
     // const starredMessages = useSelector((state: RootState) => state.messages.starredMessages[chatId] ?? {});
-    // const storedUsers = useSelector((state: RootState) => state.users.storedUsers);
+    const storedUsers = useSelector((state: RootState) => state.users.storedUsers);
 
     const bubbleStyle: any = {
         ...styles.container,
@@ -63,6 +64,7 @@ const Bubble = (props: any) => {
     switch(type) {
         case "system":
             textStyle.color = "#65644A";
+            textStyle.textAlign = "center";
             bubbleStyle.backgroundColor = colors.beige;
             bubbleStyle.alignItems = "center";
             bubbleStyle.marginTop = 10;
@@ -111,13 +113,15 @@ const Bubble = (props: any) => {
 
     return (
         <View style={wrapperStyle}>
-            <Container style={{ width: "100%" }} onLongPress={() => {
+            
+            <Container style={{ 
+                width: "100%"
+            }} onLongPress={() => {
                 Haptics.selectionAsync();
                 // @ts-ignore
                 menuRef.current.props.ctx.menuActions.openMenu(id.current);
             }}>
                 <View style={bubbleStyle}>
-
                     {
                         name && !["system", "info"].includes(type) && (
                             <Text style={{color: type === "received" ? colors.textColor : "white", ...styles.name}}>
@@ -151,7 +155,7 @@ const Bubble = (props: any) => {
                     {
                         dateString && !["system", "info"].includes(type) && <View style={styles.timeContainer}>
                             {/* { isStarred && <FontAwesome name="star" size={14} color={colors.textColor} style={{ marginRight: 5 }} /> } */}
-                            <Text style={styles.time}>
+                            <Text style={{ ...styles.time, color: type === "sent" ? colors.lightGrey : colors.grey}}>
                                 {dateString}
                             </Text>
                         </View>
@@ -180,6 +184,7 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: "regular",
         letterSpacing: 0.3,
+        marginRight: 20,
     },
     container: {
         backgroundColor: "white",
@@ -204,12 +209,13 @@ const styles = StyleSheet.create({
     time: {
         fontFamily: "regular",
         letterSpacing: 0.3,
-        color: colors.grey,
-        fontSize: 12,
+        fontSize: 10,
     },
     name: {
         fontFamily: "medium",
-        letterSpacing: 0.3
+        letterSpacing: 0.3,
+        marginRight: 20,
+        marginBottom: 2,
     },
     image: {
         width: 200,

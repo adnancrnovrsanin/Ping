@@ -34,12 +34,18 @@ const StartUpScreen = (props: any) => {
                     return;
                 }
 
-                const response = await axios.get<AuthResponse>(`/user/${userPhoneNumber}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                dispatch(authenticate({ token, user: response.data }));
+                try {
+                    const response = await axios.get<AuthResponse>(`/user/${userPhoneNumber}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    
+                    dispatch(authenticate({ token, user: response.data }));
+                } catch (error) {
+                    console.log(error);
+                }
             }
         )();
     }, [dispatch]);

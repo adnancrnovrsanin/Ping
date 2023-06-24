@@ -2,8 +2,8 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { API_BASE_URL } from "../constants/hosts";
 import { store } from "../stores/store";
 import { AuthRequest, AuthResponse, OTPRequest } from "../models/AuthInterfaces";
-import { User } from "../models/UserModels";
-import { Message, CreateMessageRequest } from "../models/Message";
+import { CheckUserResponse, UpdateUserRequest, User } from "../models/UserModels";
+import { Message, CreateMessageRequest, MessageDto } from "../models/Message";
 import { Chat, CreateChatRequest, UserChat } from "../models/Chat";
 
 axios.defaults.baseURL = API_BASE_URL;
@@ -34,6 +34,9 @@ const Account = {
     authenticate: (request: AuthRequest) => requests.post<AuthResponse>(`/auth/authenticate`, request),
     getUser: () => requests.get<User>('/user'),
     getUserByPhoneNumber: (phoneNumber: string) => requests.get<User>(`/user/${phoneNumber}`),
+    checkUserExists: (phoneNumber: string) => requests.get<CheckUserResponse>(`/user/${phoneNumber}/exists`),
+    checkIfUsersExist: (phoneNumbers: string[]) => requests.post<User[]>(`/user/contacts`, phoneNumbers),
+    updateUser: (user: UpdateUserRequest) => requests.put<User>(`/user`, user),
 }
 
 const ChatRequests = {
@@ -42,12 +45,13 @@ const ChatRequests = {
 
 const UserChatRequests = {
     getUserChatsRequest: (phoneNumber: string) => requests.get<UserChat[]>(`/user/${phoneNumber}/chats`),
+    removeUserChatRequest: (phoneNumber: string, chatId: string) => requests.delete<void>(`/user/remove/${phoneNumber}/from/${chatId}`),
 }
 
 const MessageRequests = {
-    createMessageRequest: (request: CreateMessageRequest) => requests.post<Message>(`/messages`, request),
-    getMessageByIdRequest: (id: number) => requests.get<Message>(`/messages/${id}/message`),
-    getChatMessagesRequest: (chatId: number) => requests.get<Message[]>(`/messages/${chatId}`),
+    createMessageRequest: (request: CreateMessageRequest) => requests.post<MessageDto>(`/messages`, request),
+    getMessageByIdRequest: (id: string) => requests.get<MessageDto>(`/messages/${id}/message`),
+    getChatMessagesRequest: (chatId: string) => requests.get<MessageDto[]>(`/messages/${chatId}`),
 }
 
 const agent = {
