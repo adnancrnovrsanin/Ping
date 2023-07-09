@@ -9,6 +9,8 @@ import { UpdateUserRequest, User } from "../models/UserModels";
 import { RootState } from "../stores/store";
 import agent from "../api/agent";
 import { updateLoggedInUserData } from "../stores/authSlice";
+import { UpdateChatRequest } from "../models/Chat";
+import { updateChatImageUrl } from "../stores/chatsSlice";
 
 const ProfileImage = (props: any) => {
     const dispatch = useDispatch();
@@ -39,7 +41,20 @@ const ProfileImage = (props: any) => {
             if (!uploadUrl) throw new Error("Error uploading image");
 
             if (chatId !== null) {
-                console.log(uploadUrl);
+                const newChat: UpdateChatRequest = {
+                    id: chatId,
+                    chatName: null,
+                    chatImageUrl: uploadUrl,
+                    chatDescription: null,
+                    chatType: "GROUPCHAT",
+                    memberPhoneNumbers: null,
+                    createdAt: null,
+                    updatedAt: null,
+                    latestMessage: null,
+                };
+                await agent.ChatRequests.updateChatRequest(newChat);
+
+                dispatch(updateChatImageUrl({ id: chatId, newImageUrl: uploadUrl }));
             } else if (userId !== null) {
                 const newUser: UpdateUserRequest = {
                     phoneNumber: userData?.phoneNumber ?? "",

@@ -4,7 +4,7 @@ import { store } from "../stores/store";
 import { AuthRequest, AuthResponse, OTPRequest } from "../models/AuthInterfaces";
 import { CheckUserResponse, UpdateUserRequest, User } from "../models/UserModels";
 import { Message, CreateMessageRequest, MessageDto } from "../models/Message";
-import { Chat, CreateChatRequest, UserChat } from "../models/Chat";
+import { Chat, CreateChatRequest, UpdateChatRequest, UserChat } from "../models/Chat";
 
 axios.defaults.baseURL = API_BASE_URL;
 
@@ -41,6 +41,7 @@ const Account = {
 
 const ChatRequests = {
     createChatRequest: (request: CreateChatRequest) => requests.post<Chat>(`/chats`, request),
+    updateChatRequest: (request: UpdateChatRequest) => requests.put<void>(`/chats`, request),
 }
 
 const UserChatRequests = {

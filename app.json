@@ -24,6 +24,19 @@
       },
       "package": "com.adnan2001.ping"
     },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./local/assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./local/assets/notification-sound.wav",
+            "./local/assets/notification-sound-other.wav"
+          ]
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -32,6 +45,12 @@
         "projectId": "0b51909b-e5ef-4c4a-b8a8-6b3e56c15937"
       }
     },
-    "owner": "adnan2001"
+    "owner": "adnan2001",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0b51909b-e5ef-4c4a-b8a8-6b3e56c15937"
+    }
   }
 }

@@ -44,9 +44,14 @@ const chatSlice = createSlice({
         },
         clearUserChatsData: (state) => {
             state.userChatsData = {}
+        },
+        updateChatImageUrl: (state, action) => {
+            const { id, chatImageUrl } = action.payload;
+            const chat = state.chatsData[id];
+            chat.chatImageUrl = chatImageUrl;
         }
     }
 });
 
-export const { setUserChatsData, clearChatsData, setChatsData, updateUserChatsData, updateChatsData, addChatsData, clearUserChatsData } = chatSlice.actions;
+export const { setUserChatsData, clearChatsData, setChatsData, updateUserChatsData, updateChatsData, addChatsData, clearUserChatsData, updateChatImageUrl } = chatSlice.actions;
 export default chatSlice.reducer;

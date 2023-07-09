@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ChatListScreen from "../screens/ChatListScreen";
 import ChatScreen from "../screens/ChatScreen";
 import CallsListScreen from "../screens/CallsListScreen";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer, StackActions, useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import colors from "../constants/colors";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +23,8 @@ import NewChatScreen from "../screens/NewChatScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import ChatSettingsScreen from "../screens/ChatSettingsScreen";
 import ContactScreen from "../screens/ContactScreen";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -155,9 +157,37 @@ const MainNavigator = (props: any) => {
     const storedUsers = useSelector((state: RootState) => state.users.storedUsers);
 
     const [expoPushToken, setExpoPushToken] = useState('');
-    // console.log(expoPushToken);
+    console.log(expoPushToken);
     const notificationListener = useRef();
     const responseListener = useRef();
+
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(token => setExpoPushToken(token!));
+
+        // @ts-ignore
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+            // Handle received notification
+        });
+
+        // @ts-ignore
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+            // const { data } = response.notification.request.content;
+            // const chatId = data["chatId"];
+
+            // if (chatId) {
+            //     const pushAction = StackActions.push("ChatScreen", { chatId });
+            //     navigation.dispatch(pushAction);
+            // } else console.log("No chat found in notification data");
+            console.log(response);
+        });
+
+        return () => {
+            // @ts-ignore
+            Notifications.removeNotificationSubscription(notificationListener.current);
+            // @ts-ignore
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
+    }, []);
 
     useEffect(() => {
         (
@@ -233,3 +263,35 @@ const styles = StyleSheet.create({
 });
 
 export default MainNavigator;
+
+async function registerForPushNotificationsAsync() {
+    let token;
+
+    if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+        });
+    }
+
+    if (Device.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+        }
+        token = (await Notifications.getExpoPushTokenAsync()).data;
+        console.log(token);
+    } else {
+        alert('Must use physical device for Push Notifications');
+    }
+
+    return token;
+}

@@ -20,3 +20,8 @@ export interface UpdateUserRequest {
     about: string | null
     profilePictureUrl: string | null
 }
+
+export interface TokenCreationParams {
+    phoneNumber: string
+    pushTokens: string[]
+}

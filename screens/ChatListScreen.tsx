@@ -173,7 +173,7 @@ const ChatListScreen = (props: any) => {
 
                                 if (!otherUser) return null;
 
-                                title = storedContacts[otherUser.phoneNumber].displayName ?? otherUser.displayName ?? otherUser.phoneNumber;
+                                title = storedContacts[otherUser.phoneNumber]?.displayName ?? otherUser.displayName ?? otherUser.phoneNumber;
                                 image = otherUser.profilePictureUrl || "";
                             }
 

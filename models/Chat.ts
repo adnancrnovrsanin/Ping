@@ -35,3 +35,15 @@ export interface CreateChatRequest {
     memberPhoneNumbers: string[]
     creatorPhoneNumber: string
 }
+
+export interface UpdateChatRequest {
+    id: string
+    chatName: string | null
+    chatImageUrl: string | null
+    chatDescription: string | null
+    chatType: string
+    memberPhoneNumbers: string[] | null
+    latestMessage: string | null
+    createdAt: string | null
+    updatedAt: string | null
+}

@@ -39,6 +39,26 @@ export const openCamera = async () => {
     }
 }
 
+export const shootVideo = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+        alert("Permission to access camera is required!");
+        return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+    });
+
+    if (!result.canceled) {
+        return result.assets[0].uri;
+    }
+}
+
 const checkMediaPermissions = async () => {
     if (Platform.OS !== 'web') {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -50,7 +70,7 @@ const checkMediaPermissions = async () => {
     return Promise.resolve();
 }
 
-export const uploadImageAsync = async (uri: string, isChatImage = false) => {
+export const uploadImageAsync = async (uri: string, isChatImage = false, isVoice = false) => {
     const app = getFirebaseApp();
 
     const blob: Blob = await new Promise((resolve, reject) => {
@@ -69,7 +89,14 @@ export const uploadImageAsync = async (uri: string, isChatImage = false) => {
         xhr.send();
     });
 
-    const pathFolder = isChatImage ? "chatImages" : "profileImages";
+    var pathFolder = "";
+
+    if (!isVoice){
+        pathFolder = isChatImage ? "chatImages" : "profileImages";
+    } else {
+        pathFolder = "voiceMessages";
+    }
+
     const storageRef = ref(getStorage(app), `${pathFolder}/${uuid.v4()}`);
 
     await uploadBytesResumable(storageRef, blob);

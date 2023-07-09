@@ -21,9 +21,7 @@ import AuthScreen from './screens/AuthScreen';
 import OtpScreen from './screens/OtpScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
-AsyncStorage.clear();
+// AsyncStorage.clear();
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
