@@ -1,7 +1,7 @@
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import ChatListScreen from "../screens/ChatListScreen";
 import ChatScreen from "../screens/ChatScreen";
@@ -65,20 +65,12 @@ const TabNavigator = () => {
                     elevation: 0,
                     borderTopWidth: 0,
                 },
-                tabBarItemStyle: {
-                    borderRadius: 20,
-                },
             }}
         >
             <Tab.Screen name="ChatList" component={ChatListScreen} options={{
                 tabBarShowLabel: false,
                 headerTitle: "Ping",
-                tabBarIcon: ({ color, size }) => <MaterialIcons name="chat-bubble" size={ size } color={ color } />
-            }} />
-            <Tab.Screen name="CallsList" component={CallsListScreen} options={{
-                tabBarShowLabel: false,
-                headerTitle: "Ping",
-                tabBarIcon: ({ color, size }) => <MaterialIcons name="phone" size={ size } color={ color } />
+                tabBarIcon: ({ color, size }) => <Entypo name="chat" size={size} color={color} />
             }} />
         </Tab.Navigator>
     );
