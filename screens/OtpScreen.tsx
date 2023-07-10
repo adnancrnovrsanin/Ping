@@ -5,7 +5,7 @@ import { SafeAreaView, StyleSheet, Button, Text, View, TouchableOpacity, Image, 
 import OTPInputView from "@twotalltotems/react-native-otp-input";
 import colors from "../constants/colors";
 import agent from "../api/agent";
-import { AuthRequest } from "../models/AuthInterfaces";
+import { AuthRequest, OTPRequest } from "../models/AuthInterfaces";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
 import { authenticate } from "../stores/authSlice";
@@ -24,7 +24,7 @@ const OtpScreen = (props: any) => {
 
      <Text style={styles.prompt}>Enter the code we sent you</Text>
      <Text style={styles.message}>
-       {`Your phone (${phoneNumber}) will be used to protect your account each time you log in.`}
+       {`Your phone (${phoneNumber}) will be used to log you in.`}
      </Text>
 
      <OTPInputView
@@ -51,12 +51,6 @@ const OtpScreen = (props: any) => {
                 expiryDate: response.tokenExpiration,
               }));
               dispatch(authenticate(response));
-              
-              if (response.user.displayName === null) {
-                props.navigation.navigate("CreateAccount", {
-                  phoneNumber: phoneNumber,
-                });
-              }
             } else {
               setInvalidCode(true);
             }
@@ -76,14 +70,20 @@ const OtpScreen = (props: any) => {
      <View style={styles.optionsContainer}>
         <TouchableOpacity
           style={styles.optionButton}
-          onPress={() => agent.Account.generateOTP(phoneNumber)}
+          onPress={() => () => {
+            const request: OTPRequest = {
+              phoneNumber: phoneNumber,
+            };
+            
+            agent.Account.generateOTP(request);
+          }}
         >
             <Text style={styles.optionText}>Resend the code</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.optionButton}
-          onPress={() => console.log("edit phone number")}
+          onPress={() => props.navigation.goBack()}
         >
             <Text style={styles.optionText}>Edit phone number</Text>
         </TouchableOpacity>

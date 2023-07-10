@@ -58,12 +58,6 @@ const ChatListScreen = (props: any) => {
                     <>
                         <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                             <Item 
-                                title="Search Chats"
-                                iconName="search"
-                                color="white"
-                                onPress={() => {}}
-                            />
-                            <Item 
                                 title="Options"
                                 iconName="ellipsis-vertical"
                                 color="white"

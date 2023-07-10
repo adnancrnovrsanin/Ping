@@ -200,18 +200,6 @@ const ChatScreen = (props: any) => {
                 return (
                     <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                         <Item 
-                            title="Video Call"
-                            iconName="videocam"
-                            color="white"
-                            onPress={() => {}}
-                        />
-                        <Item 
-                            title="Audio Call"
-                            iconName="call-outline"
-                            color="white"
-                            onPress={() => {}}
-                        />
-                        <Item 
                             title="Options"
                             iconName="ellipsis-vertical"
                             color="white"
@@ -288,7 +276,7 @@ const ChatScreen = (props: any) => {
         try {
             setIsLoading(true);
 
-            const uploadUrl = await uploadImageAsync(tempImageUri);
+            const uploadUrl = await uploadImageAsync(tempImageUri, false, false, false, true);
             
             const newMessage: CreateMessageRequest = {
                 message: messageTextCopy,
@@ -322,7 +310,7 @@ const ChatScreen = (props: any) => {
         try {
             setIsLoading(true);
 
-            const uploadUrl = await uploadImageAsync(tempVideoUri);
+            const uploadUrl = await uploadImageAsync(tempVideoUri, false, false, true, false);
             
             const newMessage: CreateMessageRequest = {
                 message: messageTextCopy,
@@ -435,7 +423,7 @@ const ChatScreen = (props: any) => {
         try {
             setIsLoading(true);
 
-            const uploadUrl = await uploadImageAsync(tempAudioUri);
+            const uploadUrl = await uploadImageAsync(tempAudioUri, false, true, false, false);
 
             const newMessage: CreateMessageRequest = {
                 message: "",
@@ -572,7 +560,7 @@ const ChatScreen = (props: any) => {
                                 <Text style={styles.recordingText}>Recording..</Text>
                                 <TouchableOpacity onPress={() => {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                                    stopRecording().then(() => {
+                                    stopRecording().finally(() => {
                                         sendAudioMessage();
                                     });
                                 }}

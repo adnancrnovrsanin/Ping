@@ -27,7 +27,7 @@ const AuthScreen = (props: any) => {
 
                         <Formik
                             initialValues={{ phoneNumber: "", error: null }}
-                            onSubmit={(values, { setErrors }) => {
+                            onSubmit={(values, { setSubmitting }) => {
                                 const request: OTPRequest = {
                                     phoneNumber: values.phoneNumber,
                                 };
@@ -37,6 +37,7 @@ const AuthScreen = (props: any) => {
                                 agent.Account.generateOTP(request)
                                     .then(() => {
                                         props.navigation.navigate("Otp", { phoneNumber: values.phoneNumber });
+                                        setSubmitting(false);
                                     })
                                     .catch((error) => {
                                         console.log(error);

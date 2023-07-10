@@ -70,7 +70,7 @@ const checkMediaPermissions = async () => {
     return Promise.resolve();
 }
 
-export const uploadImageAsync = async (uri: string, isChatImage = false, isVoice = false) => {
+export const uploadImageAsync = async (uri: string, isChatImage = false, isVoice = false, videoMessage = false, imageMessage = false) => {
     const app = getFirebaseApp();
 
     const blob: Blob = await new Promise((resolve, reject) => {
@@ -91,10 +91,18 @@ export const uploadImageAsync = async (uri: string, isChatImage = false, isVoice
 
     var pathFolder = "";
 
-    if (!isVoice){
-        pathFolder = isChatImage ? "chatImages" : "profileImages";
-    } else {
+    pathFolder = isChatImage ? "chatImages" : "profileImages";
+
+    if (isVoice) {
         pathFolder = "voiceMessages";
+    }
+
+    if (videoMessage){
+        pathFolder = "videoMessages";
+    }
+
+    if (imageMessage){
+        pathFolder = "imageMessages";
     }
 
     const storageRef = ref(getStorage(app), `${pathFolder}/${uuid.v4()}`);

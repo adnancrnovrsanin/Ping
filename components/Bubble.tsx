@@ -49,7 +49,10 @@ const Bubble = (props: any) => {
 
     const [videoPlayStatus, setVideoPlayStatus] = useState({});
     const [audioPlayStatus, setAudioPlayStatus] = useState(false);
-    const [audio, setAudio] = useState<Audio.Sound | null>(null)
+    const [audio, setAudio] = useState<Audio.Sound | null>(null);
+
+    const playbackDuration = useRef<number | null>(null);
+    const playbackPosition = useRef<number | null>(null);
 
     const videoRef = useRef<Video | null>(null);
 
@@ -163,6 +166,15 @@ const Bubble = (props: any) => {
             await soundObject.loadAsync({ uri: audioUrl });
             setAudio(soundObject);
             soundObject.setOnPlaybackStatusUpdate((playbackStatus) => {
+                if (playbackStatus.isLoaded && playbackStatus.isPlaying) {
+                    const pd = (playbackStatus.durationMillis as number) ?? null;
+                    const pp = (playbackStatus.positionMillis as number) ?? null;
+                    playbackDuration.current = pd;
+                    playbackPosition.current = pp;
+                    console.log(pd, pp);
+                    console.log(playbackDuration.current, playbackPosition.current);
+                }
+
                 playbackStatus = playbackStatus as AVPlaybackStatusSuccess;
                 if (playbackStatus) {
                     if (playbackStatus.didJustFinish) {
@@ -299,7 +311,10 @@ const Bubble = (props: any) => {
                                     ...styles.audioBarContainer,
                                     backgroundColor: type === "audioSent" ? colors.extraLightGrey : "black"
                                 }}>
-                                    <View style={{ ...styles.audioBar, width: 50 }} />
+                                    <View style={{ 
+                                        ...styles.audioBar, 
+                                        width: playbackDuration.current !== null && playbackPosition.current !== null ? `${(playbackPosition.current / playbackDuration.current) * 100}%` : 0, 
+                                    }} />
                                 </View>
 
                                 {/* <View style={styles.audioTimeContainer}>
@@ -405,7 +420,7 @@ const styles = StyleSheet.create({
     },
     audioBar: {
         height: 3,
-        // backgroundColor: colors.lightBlueGreen,
+        backgroundColor: colors.lightBlueGreen,
         borderRadius: 100,
     },
     audioTimeContainer: {
